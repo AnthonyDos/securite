@@ -1,0 +1,19 @@
+version: '3.9'
+services:
+  app:
+    build: .
+    ports:
+      - "3000:3000"
+    networks:
+      - app-network
+  db:
+    image: postgres:13
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: nodeapp
+    networks:
+      - app-network
+networks:
+  app-network:
+    driver: bridge

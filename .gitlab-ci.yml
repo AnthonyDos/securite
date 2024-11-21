@@ -1,0 +1,37 @@
+stages:
+  - build
+  - test
+  - scan
+  - deploy
+
+variables:
+  DOCKER_DRIVER: overlay2
+
+build:
+  stage: build
+  image: docker:20.10
+  services:
+    - docker:dind
+  script:
+    - docker build -t node-app .
+
+test:
+  stage: test
+  image: node:14
+  script:
+    - npm install
+    - npm test
+
+scan:
+  stage: scan
+  image: aquasec/trivy:latest
+  script:
+    - trivy image --severity HIGH node-app
+
+deploy:
+  stage: deploy
+  image: docker:20.10
+  services:
+    - docker:dind
+  script:
+    - docker-compose up -d
